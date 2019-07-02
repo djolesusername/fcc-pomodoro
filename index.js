@@ -1,3 +1,4 @@
+const audio = document.getElementById("Q");
 
 
 class App extends React.Component {
@@ -7,23 +8,54 @@ class App extends React.Component {
 
         this.state = {
             break: 5,
-            session: 1,
-            left: 1,
-            bleft: 5,
+            session: 25,
+            left: 25,
             active: false,
-            activeb: false,
+            ended: true,
             action: "Session",
             then: 0,
-            secondsLeft: 1,
+            secondsLeft: 1500,
+            display: "25:00",
+            transfer: false,
+
+
 
         };
     }
 
+    // Similar logic to startTimer.This function switches between session and break. 
+
+    handleTransfer = () => {
+        console.log("handleout")
+
+        if (this.state.action == "Session") {
+            this.setState({
+                action: "Break",
+                secondsLeft: this.state.break * 60,
+                left: this.state.break,
+                then: Date.now() + this.state.break * 60 * 1000,
+                transfer: true,
+
+            })
+        } else if (this.state.action == "Break") {
+            this.setState({
+                action: "Session",
+                secondsLeft: this.state.session * 60,
+                left: this.state.session,
+                then: Date.now() + this.state.session * 60 * 1000,
+                transfer: true,
+            })
+        }
+
+        setTimeout(() => (this.setState({
+            transfer: false,
+        }), 3000))
+
+    }
     breakDown = () => {
-        if (this.state.break > 0) {
+        if (this.state.break >= 2) {
             this.setState({
                 break: this.state.break - 1,
-
             });
         }
     }
@@ -37,51 +69,25 @@ class App extends React.Component {
             });
         }
     }
+
+    // Adjusts the length of the session. Buttons are allowed to edit session length as 
+    // long as current session remains unchenged. Pressing reset and then start will allow
     sessionDown = () => {
-
-        this.setState({
-            session: this.state.session - 1,
-
-        });
-    }
-
-    sessionUp = () => {
-
-        this.setState({
-            session: this.state.session + 1,
-
-        });
-    }
-
-    componentDidMount = () => {
-        var intervalId = setInterval(this.checkTime, 1000);
-        // store intervalId in the state so it can be accessed later:
-        this.setState({ intervalId: intervalId });
-    }
-    componentWillUnmount = () => {
-        clearInterval(this.state.intervalId)
-    }
-
-    startTimer = () => {
-
-        this.checkTime();
-
-        this.setState({
-            then: Date.now() + this.state.left * 60 * 1000,
-            active: !this.state.active,
-            left: this.state.secondsLeft / 60
-        });
+        if (this.state.session >= 2) {
+            this.setState({
+                session: this.state.session - 1,
 
 
 
-    }
 
-    checkTime = () => {
-        if (this.state.active) {
-            if (this.state.secondsLeft > 0) {
-                console.log("checkTime")
+            });
+
+            if (!this.state.active && this.state.ended) {
                 this.setState({
-                    secondsLeft: Math.round((this.state.then - Date.now()) / 1000),
+                    secondsLeft: this.state.secondsLeft - 60,
+                    left: this.state.left - 1,
+                    display: `${this.state.session - 1 < 10 ? "0" : ""}${this.state.session - 1}:00`
+
 
                 });
             }
@@ -90,9 +96,98 @@ class App extends React.Component {
 
 
 
+    sessionUp = () => {
+        if (this.state.session < 60) {
+
+            this.setState({
+                session: this.state.session + 1,
+
+            });
+
+            if (!this.state.active && this.state.ended) {
+                console.log("Session up not active")
+                this.setState({
+                    secondsLeft: this.state.secondsLeft + 60,
+                    left: this.state.left + 1,
+                    display: `${this.state.session + 1 < 10 ? "0" : ""}${this.state.session + 1}:00`
+
+                });
+            }
+
+        }
+    }
+
+    componentDidMount = () => {
+        var intervalId = setInterval(this.checkTime, 10);
+        // store intervalId in the state so it can be accessed later:
+        this.setState({ intervalId: intervalId });
+    }
+
+    componentWillUnmount = () => {
+        console.log("clearI")
+        clearInterval(this.state.intervalId)
+    }
+
+
+
+    startTimer = () => {
+
+        this.setState({
+            active: !this.state.active,
+            left: this.state.secondsLeft / 60,
+            then: Date.now() + this.state.left * 60 * 1000,
+            ended: false,
+
+
+        })
+        this.checkTime()
+    }
+
+
+    checkTime = () => {
+
+        let minutes = Math.floor(this.state.secondsLeft / 60);
+        let remseconds = this.state.secondsLeft % 60;
+        if (this.state.active) {
+            if (this.state.secondsLeft > 0) {
+
+                this.setState({
+                    secondsLeft: Math.round((this.state.then - Date.now()) / 1000),
+                    display: `${minutes < 10 ? "0" : ""}${minutes}:${remseconds < 10 ? "0" : ""}${remseconds}`,
+
+                })
+
+            }
+
+
+            else if (this.state.secondsLeft == 0) {
+
+                this.setState({
+                    display: `${minutes < 10 ? "0" : ""}${minutes}:${remseconds < 10 ? "0" : ""}${remseconds}`,
+
+                })
+                if (!this.state.transfer) {
+
+                    this.setState({
+                        transfer: true,
+                    })
+                    setTimeout(() => { this.handleTransfer() }, 980)
+                }
+            }
+
+            /* else if (this.state.secondsLeft == 0 || this.state.display == "00:00") {
+                this.handleTransfer, 1000
+            } */
+
+        }
+    }
+
+    //   checkBreak = () => 
+
+
+    //In order to pass the tests, reset button should return values to original state.
 
     resetTimer = () => {
-        clearInterval(this.state.intervalId)
 
         this.setState({
             left: this.state.session,
@@ -100,6 +195,13 @@ class App extends React.Component {
             active: false,
             activeb: false,
             action: "Session",
+            secondsLeft: this.state.session * 60,
+            display: "00:00",
+            ended: true,
+            break: 5,
+            session: 25,
+            left: 25,
+
         })
 
     }
@@ -113,12 +215,18 @@ class App extends React.Component {
             <div className="item1"><h1> Pomodoro clock </h1></div>
             <div className="item2" id="break-label"> <h4>Break Length </h4> </div>
             <div className="item3" id="session-label">Session Length</div>
-            <div className="item4"> <button id="break-decrement" onClick={this.breakDown}>-</button> <p id="break-length"> {this.state.break} </p>
+            <div className="item4"> <button id="break-decrement" onClick={this.breakDown}>-</button>
+                <p id="break-length"> {this.state.break} </p>
                 <button id="break-increment" onClick={this.breakUp}>+</button> </div>
-            <div className="item5"> <button id="session-decrement" onClick={this.sessionDown}>-</button> <p id="session-length"> {this.state.session} </p>
+            <div className="item5"> <button id="session-decrement" onClick={this.sessionDown}>-</button>
+                <p id="session-length"> {this.state.session} </p>
                 <button id="session-increment" onClick={this.sessionUp}>+</button> </div>
-            <div className="item6"> <p id="timer-label"> {this.state.action} {this.state.left} {this.state.secondsLeft} </p> <p id="time-left"> </p> </div>
-            <div className="item7"> <button id="start_stop" onClick={this.startTimer}> Start </button>  <button id="reset" onClick={this.resetTimer} > Reset </button></div>
+            <div className="item6">
+                <p id="timer-label"> {this.state.action} </p>
+                <p id="time-left"> {this.state.display} </p> </div>
+            <div className="item7"> <button id="start_stop" onClick={this.startTimer}> Start </button>
+                <button id="reset" onClick={this.resetTimer} > Reset </button></div>
+
         </div>);
     }
 
