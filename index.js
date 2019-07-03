@@ -204,10 +204,11 @@ class App extends React.Component {
             activeb: false,
             action: "Session",
             secondsLeft: this.state.session * 60,
-            display: "00:00",
+            display: `${this.state.session < 10 ? "0" : ""}${this.state.session + 1}:00`,
             ended: true,
             break: 5,
             session: 25,
+            transfer: false,
             left: 25,
 
         })
