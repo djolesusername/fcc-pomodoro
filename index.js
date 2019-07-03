@@ -23,7 +23,9 @@ class App extends React.Component {
         };
     }
 
-    // Similar logic to startTimer.This function switches between session and break. 
+    // This function switches between session and break. It will run similar code to one of startTimer. 
+    // It runs startTimer on property transfer which controls whether handleTransfer could be called 
+
 
     handleTransfer = () => {
         console.log("handleout")
@@ -71,7 +73,7 @@ class App extends React.Component {
     }
 
     // Adjusts the length of the session. Buttons are allowed to edit session length as 
-    // long as current session remains unchenged. Pressing reset and then start will allow
+    // long as current session remains unchenged. In case that timer is not active changes are applied to other properties
     sessionDown = () => {
         if (this.state.session >= 2) {
             this.setState({
@@ -116,9 +118,10 @@ class App extends React.Component {
 
         }
     }
+    // Running checkTime function which checks remaining time and updates the display 
 
     componentDidMount = () => {
-        var intervalId = setInterval(this.checkTime, 10);
+        var intervalId = setInterval(this.checkTime, 30);
         // store intervalId in the state so it can be accessed later:
         this.setState({ intervalId: intervalId });
     }
@@ -128,6 +131,7 @@ class App extends React.Component {
         clearInterval(this.state.intervalId)
     }
 
+    // Start timer will calculate time from now and use it as target time. Any time start/pause button is hit these values are updated. 
 
 
     startTimer = () => {
@@ -135,14 +139,17 @@ class App extends React.Component {
         this.setState({
             active: !this.state.active,
             left: this.state.secondsLeft / 60,
-            then: Date.now() + this.state.left * 60 * 1000,
+            // then: Date.now() + this.state.left * 60 * 1000,
+            then: Date.now() + this.state.secondsLeft * 1000,
             ended: false,
 
 
         })
         this.checkTime()
     }
-
+    // This function is called every 30ms
+    // Minutes and remseconds are used for display only. secondsLeft is the timer of the application and it updates
+    // using difference between current and target time. Once timer reaches 00:00 handleTransfer function is called 
 
     checkTime = () => {
 
@@ -182,10 +189,11 @@ class App extends React.Component {
         }
     }
 
-    //   checkBreak = () => 
+
 
 
     //In order to pass the tests, reset button should return values to original state.
+
 
     resetTimer = () => {
 
