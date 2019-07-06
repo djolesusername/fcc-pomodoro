@@ -1,4 +1,3 @@
-const audio = document.getElementById("Q");
 
 
 class App extends React.Component {
@@ -204,7 +203,7 @@ class App extends React.Component {
             activeb: false,
             action: "Session",
             secondsLeft: this.state.session * 60,
-            display: `${this.state.session < 10 ? "0" : ""}${this.state.session + 1}:00`,
+            display: `${this.state.session < 10 ? "0" : ""}${this.state.session}:00`,
             ended: true,
             break: 5,
             session: 25,
@@ -221,13 +220,14 @@ class App extends React.Component {
     render() {
 
         return (<div className="grid-container">
-            <div className="item1"><h1> Pomodoro clock </h1></div>
-            <div className="item2" id="break-label"> <h4>Break Length </h4> </div>
-            <div className="item3" id="session-label">Session Length</div>
-            <div className="item4"> <button id="break-decrement" onClick={this.breakDown}>-</button>
+
+            <div className="item2" id="break-label"> <p>Break Length </p>
+                <button id="break-decrement" onClick={this.breakDown}>-</button>
                 <p id="break-length"> {this.state.break} </p>
                 <button id="break-increment" onClick={this.breakUp}>+</button> </div>
-            <div className="item5"> <button id="session-decrement" onClick={this.sessionDown}>-</button>
+
+            <div className="item3" id="session-label"> <p>Session Length</p>
+                <button id="session-decrement" onClick={this.sessionDown}>-</button>
                 <p id="session-length"> {this.state.session} </p>
                 <button id="session-increment" onClick={this.sessionUp}>+</button> </div>
             <div className="item6">
