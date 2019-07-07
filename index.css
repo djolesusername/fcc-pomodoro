@@ -8,7 +8,12 @@
   .grid-container > div {
        text-align: center;
     padding: 20px 0;
-    font-size: 30px;
+    font-size: 20px;
+   
+
+    font-family: 'Rubik Mono One', sans-serif;
+
+
   }
   
   .item1 {
@@ -41,11 +46,58 @@
   }
 
 body  {
-    color: yellow;
-    background: url("push.jpg");
+    color: white;
+        background: url("push.jpg");
+        
             }
 
             #time-left {
 font-size: 100px !important;
-color: white;
+color: rgba(255, 0, 0, 0.589);
+
+
+
             }
+
+            #break-decrement, #session-decrement {
+                background-color: rgba(255, 0, 0, 0.589);
+                padding-right: 16px;
+                padding-left: 16px;
+                color: white;
+                padding-top: 1px; 
+                padding-bottom: 1px; 
+            }
+
+            #break-increment, #session-increment {
+                background-color: yellow;
+                padding-right: 16px;
+                padding-left: 16px;
+                padding-top: 1px; 
+                padding-bottom: 1px; 
+                color: black;
+            }
+
+            @media (max-width: 600px) {
+                body {
+                 font-size: 10px !important;
+                 background-position: left -380px;
+                 background-repeat: no-repeat;
+
+                  
+                }
+              }
+
+              button {
+                  background-color: transparent;
+                  border: none;
+                  cursor: pointer;
+                  overflow: hidden;
+                  outline: none;
+                  color: rgba(255, 0, 0, 0.589);
+                  padding: 20px;
+              }
+
+         
+#timer-label {
+    font-size: 35px;
+}

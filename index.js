@@ -173,7 +173,7 @@ class App extends React.Component {
 
                 })
                 if (!this.state.transfer) {
-
+                    this.playAudio()
                     this.setState({
                         transfer: true,
                     })
@@ -214,6 +214,10 @@ class App extends React.Component {
 
     }
 
+    playAudio = () => {
+        const audio = document.getElementById("beep")
+        audio.play();
+    }
 
 
 
@@ -221,20 +225,24 @@ class App extends React.Component {
 
         return (<div className="grid-container">
 
-            <div className="item2" id="break-label"> <p>Break Length </p>
+
+            <div className="item6">
+                <p id="timer-label"> {this.state.action} </p>
+                <p id="time-left"> {this.state.display} </p> </div>
+            <div className="item7"> <button id="start_stop" onClick={this.startTimer}> <i className="far fa-play-circle fa-7x"></i> </button>
+                <button id="reset" onClick={this.resetTimer} > <i className="fas fa-ban fa-7x"></i> </button></div>
+
+            <div className="item2" id="break-label"> <p>Break </p>
                 <button id="break-decrement" onClick={this.breakDown}>-</button>
                 <p id="break-length"> {this.state.break} </p>
                 <button id="break-increment" onClick={this.breakUp}>+</button> </div>
 
-            <div className="item3" id="session-label"> <p>Session Length</p>
+            <div className="item3" id="session-label"> <p>Session</p>
                 <button id="session-decrement" onClick={this.sessionDown}>-</button>
                 <p id="session-length"> {this.state.session} </p>
                 <button id="session-increment" onClick={this.sessionUp}>+</button> </div>
-            <div className="item6">
-                <p id="timer-label"> {this.state.action} </p>
-                <p id="time-left"> {this.state.display} </p> </div>
-            <div className="item7"> <button id="start_stop" onClick={this.startTimer}> Start </button>
-                <button id="reset" onClick={this.resetTimer} > Reset </button></div>
+
+
 
         </div>);
     }
