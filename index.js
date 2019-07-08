@@ -34,7 +34,7 @@ class App extends React.Component {
                 action: "Break",
                 secondsLeft: this.state.break * 60,
                 left: this.state.break,
-                then: Date.now() + this.state.break * 60 * 1000,
+                //then: Date.now() + this.state.break * 60 * 1000,
                 transfer: true,
 
             })
@@ -43,7 +43,7 @@ class App extends React.Component {
                 action: "Session",
                 secondsLeft: this.state.session * 60,
                 left: this.state.session,
-                then: Date.now() + this.state.session * 60 * 1000,
+                // then: Date.now() + this.state.session * 60 * 1000,
                 transfer: true,
             })
         }
@@ -120,9 +120,14 @@ class App extends React.Component {
     // Running checkTime function which checks remaining time and updates the display 
 
     componentDidMount = () => {
-        var intervalId = setInterval(this.checkTime, 30);
+        var intervalId = setInterval(this.checkTime, 1000);
+        var intervalId2 = setInterval(this.displayTime, 10);
+
+
         // store intervalId in the state so it can be accessed later:
         this.setState({ intervalId: intervalId });
+        this.setState({ intervalId2: intervalId2 });
+
     }
 
     componentWillUnmount = () => {
@@ -139,27 +144,61 @@ class App extends React.Component {
             active: !this.state.active,
             left: this.state.secondsLeft / 60,
             // then: Date.now() + this.state.left * 60 * 1000,
-            then: Date.now() + this.state.secondsLeft * 1000,
+            //  then: Date.now() + this.state.secondsLeft * 1000,
             ended: false,
 
 
         })
         this.checkTime()
     }
-    // This function is called every 30ms
     // Minutes and remseconds are used for display only. secondsLeft is the timer of the application and it updates
     // using difference between current and target time. Once timer reaches 00:00 handleTransfer function is called 
 
-    checkTime = () => {
 
+    displayTime = () => {
         let minutes = Math.floor(this.state.secondsLeft / 60);
         let remseconds = this.state.secondsLeft % 60;
+        /*   if (this.state.secondsLeft % 60 == 0 && minutes > 0) {
+               minutes--
+               remseconds = 59;
+           }
+           else if (this.state.secondsLeft % 60 == 0 && minutes == 0) {
+               remseconds = 0;
+           }
+   
+           else {
+               remseconds = this.state.secondsLeft % 60 - 1;
+           }
+   */
+        if (this.state.active) {
+            if (this.state.secondsLeft >= 0) {
+
+                this.setState({
+                    display: `${minutes < 10 ? "0" : ""}${minutes}:${remseconds < 10 ? "0" : ""}${remseconds}`,
+
+                })
+
+            }
+
+
+        }
+
+
+
+
+
+
+    }
+
+    checkTime = () => {
+
+
         if (this.state.active) {
             if (this.state.secondsLeft > 0) {
 
                 this.setState({
-                    secondsLeft: Math.round((this.state.then - Date.now()) / 1000),
-                    display: `${minutes < 10 ? "0" : ""}${minutes}:${remseconds < 10 ? "0" : ""}${remseconds}`,
+                    secondsLeft: this.state.secondsLeft - 1,
+
 
                 })
 
@@ -168,16 +207,13 @@ class App extends React.Component {
 
             else if (this.state.secondsLeft == 0) {
 
-                this.setState({
-                    display: `${minutes < 10 ? "0" : ""}${minutes}:${remseconds < 10 ? "0" : ""}${remseconds}`,
 
-                })
                 if (!this.state.transfer) {
                     this.playAudio()
                     this.setState({
                         transfer: true,
                     })
-                    setTimeout(() => { this.handleTransfer() }, 980)
+                    setTimeout(() => { this.handleTransfer() }, 1000)
                 }
             }
 
@@ -195,20 +231,21 @@ class App extends React.Component {
 
 
     resetTimer = () => {
+        this.stopAudio();
 
         this.setState({
-            left: this.state.session,
+            left: 25,
             bleft: this.state.break,
             active: false,
             activeb: false,
             action: "Session",
-            secondsLeft: this.state.session * 60,
-            display: `${this.state.session < 10 ? "0" : ""}${this.state.session}:00`,
+            secondsLeft: 1500,
+            display: `25:00`,
             ended: true,
             break: 5,
             session: 25,
             transfer: false,
-            left: 25,
+
 
         })
 
@@ -217,8 +254,15 @@ class App extends React.Component {
     playAudio = () => {
         const audio = document.getElementById("beep")
         audio.play();
-    }
 
+
+    }
+    stopAudio = () => {
+        const audio = document.querySelector("#beep");
+
+        audio.pause();
+        audio.currentTime = 0;
+    }
 
 
     render() {
